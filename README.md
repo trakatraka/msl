@@ -1,6 +1,6 @@
 # msl
 
-a podman wrapper that drops a fedora bash on the current working directory mounted as /mnt/pwd/$PWD
+a podman wrapper that drops a fedora bash on the current working directory mounted as /mnt/pwd/$PWD. Usefull like WSL but for macOS.
 
 ## install podman
 
