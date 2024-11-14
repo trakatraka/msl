@@ -1,0 +1,17 @@
+#!env bash
+# calculate the location of this script
+BIN_DIR=$( dirname -- "$( readlink -f -- "$0"; )"; )
+# source common
+source $BIN_DIR/../share/common
+# calculate rm image
+IMAGE_CHECK_CMD="$PODMAN_BIN image list $TAG_NAME --noheading --all"
+IMAGE_CHECK_CMD_OUTPUT=`$IMAGE_CHECK_CMD`
+if [ "${IMAGE_CHECK_CMD_OUTPUT/$'\n'}" != "" ]; then
+	IMAGE_RM_CMD="$PODMAN_BIN image rm $TAG_NAME"
+	if [ $DEBUG == "1" ]; then
+	    echo ""
+	    echo "$IMAGE_RM_CMD"
+	    echo ""
+	fi
+	$IMAGE_RM_CMD
+fi

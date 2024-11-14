@@ -1,0 +1,27 @@
+#!env bash
+# calculate the location of this script
+BIN_DIR=$( dirname -- "$( readlink -f -- "$0"; )"; )
+# source common
+source $BIN_DIR/msl-base-init
+IMAGE_LS_CMD="$PODMAN_BIN image list --noheading $TAG_NAME"
+IMAGE_LS_OUTPUT=`$IMAGE_LS_CMD`
+if [ "${IMAGE_LS_OUTPUT/$'\n'}" == "" ]; then
+    # calculate build cmd
+    BUILD_CMD="$PODMAN_BIN build -f $MSL_DOCKERFILE --build-context=MSLRC_CONTEXT=$MSLRC_CONTEXT $MSL_BUILD_OPTIONS --tag $TAG_NAME"
+    # run build
+    if [ $DEBUG == "1" ]; then
+        echo ""
+        echo "$BUILD_CMD"
+        echo ""
+        $BUILD_CMD
+    else
+        BUILD_OUTPUT=`$BUILD_CMD`
+    fi
+    BUILD_EXIT_CODE=$?
+    if [ "$BUILD_EXIT_CODE" != "0" ]; then
+        echo "building failed"
+        echo "BUILD_EXIT_CODE=$BUILD_EXIT_CODE"
+        echo $BUILD_OUTPUT
+        exit $BUILD_EXIT_CODE
+    fi  
+fi

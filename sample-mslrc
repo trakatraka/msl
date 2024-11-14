@@ -1,0 +1,7 @@
+#!env bash
+
+# user password
+echo "user" | passwd -f --stdin user
+
+echo "dnf update -y"
+dnf update -y

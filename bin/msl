@@ -1,0 +1,14 @@
+#!env bash
+# calculate the location of this script
+BIN_DIR=$( dirname -- "$( readlink -f -- "$0"; )"; )
+# source init
+source $BIN_DIR/msl-init
+# calculate run cmd
+RUN_CMD="$PODMAN_BIN run --ulimit nofile=65535:65535 --shm-size=256m --workdir \"$MOUNT_TARGET\" --userns=keep-id:uid=1000,gid=1000 --volume \"$MOUNT_SOURCE:$MOUNT_TARGET\" --rm -it $MSL_RUN_OPTIONS $TAG_NAME $@"
+# run
+if [ $DEBUG == "1" ]; then
+    echo ""
+    echo "$RUN_CMD"
+    echo ""
+fi
+eval $RUN_CMD

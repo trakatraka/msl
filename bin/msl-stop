@@ -1,0 +1,14 @@
+#!env bash
+# calculate the location of this script
+BIN_DIR=$( dirname -- "$( readlink -f -- "$0"; )"; )
+# source init
+source $BIN_DIR/../share/common
+# calculate run cmd
+RUN_CMD="podman machine stop"
+# run
+if [ $DEBUG == "1" ]; then
+    echo ""
+    echo "$RUN_CMD"
+    echo ""
+fi
+eval $RUN_CMD

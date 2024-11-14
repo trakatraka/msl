@@ -1,0 +1,62 @@
+#!env bash
+# calculate if debug logging is necesary
+if [ ${DEBUG+x} ] && [ "${DEBUG}" == "1" ]; then
+    DEBUG="1"
+else
+    DEBUG="0"
+fi
+# calculate the location of this script
+#SCRIPT_DIR=$( dirname -- "$( readlink -f -- "$0"; )"; )
+SHARE_DIR=$BIN_DIR/../share
+# calculate podman_bin
+if [ -z ${PODMAN_BIN+x} ]; then
+    PODMAN_BIN="podman"
+fi
+# calculate dockerfile
+MSL_DOCKERFILE="$SHARE_DIR/images/msl/Dockerfile"
+# calculate mount
+if [ -z ${MOUNT_SOURCE+x} ]; then
+    MOUNT_SOURCE=$PWD
+fi
+if [ -z ${MOUNT_TARGET+x} ]; then
+    MOUNT_TARGET=/mnt/pwd/$MOUNT_SOURCE
+fi
+# calculate location of .mslrc
+if [ -z ${MSLRC_CONTEXT+x} ]; then
+    if [ -f "$PWD/.mslrc" ]; then
+        MSLRC_CONTEXT="$PWD"
+    elif [ -f "$HOME/.mslrc" ]; then
+        MSLRC_CONTEXT=$HOME
+    else
+        MSLRC_CONTEXT=$SHARE_DIR/images/msl
+    fi
+fi
+BASE_TAG_NAME="localhost/msl_base"
+#MSL_BASE_IMAGE_TAR="$HOME/.msl_base.tar"
+MSL_BASE_IMAGE_DOCKERFILE="$SHARE_DIR/images/msl_base/Dockerfile"
+# calculate a valid image tag name
+if [ -z ${TAG_NAME+x} ]; then
+    if [ "${MSLRC_CONTEXT}" == $SHARE_DIR/images/msl ]; then
+        # when using the default MSLRC_CONTEXT just use the base image
+        TAG_NAME=$BASE_TAG_NAME
+    else
+        # adding only specificstuff for the image
+        #TAG_NAME="P${MSL_PRIVILEGED}_$MSL_DOCKERFILE${MSLRC_CONTEXT}"
+        TAG_NAME="msl${MSLRC_CONTEXT}"
+        TAG_NAME="${TAG_NAME//\//_}"
+        TAG_NAME="${TAG_NAME//\./_}"
+        TAG_NAME="localhost/`echo "${TAG_NAME//\@/AT}" | tr '[:upper:]' '[:lower:]'`"
+    fi
+fi
+if [ $DEBUG == "1" ]; then
+    echo "TAG_NAME=$TAG_NAME"
+    echo "MSL_DOCKERFILE=$MSL_DOCKERFILE"
+    echo "MOUNT_SOURCE=$MOUNT_SOURCE"
+    echo "MOUNT_TARGET=$MOUNT_TARGET"
+    echo "MSLRC=$MSLRC_CONTEXT/.mslrc"
+    echo "MSL_BUILD_OPTIONS=$MSL_BUILD_OPTIONS"
+    echo "MSL_RUN_OPTIONS=$MSL_RUN_OPTIONS"
+    echo "MSL_BASE_IMAGE_DOCKERFILE=$MSL_BASE_IMAGE_DOCKERFILE"
+    echo "BIN_DIR=$BIN_DIR"
+    echo "SHARE_DIR=$SHARE_DIR"
+fi

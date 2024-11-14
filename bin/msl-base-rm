@@ -1,0 +1,16 @@
+#!env bash
+# calculate the location of this script
+BIN_DIR=$( dirname -- "$( readlink -f -- "$0"; )"; )
+# source common
+source $BIN_DIR/../share/common
+BASE_IMAGE_LS_CMD="podman image list --noheading $BASE_TAG_NAME --all"
+BASE_IMAGE_LS_OUTPUT=`$BASE_IMAGE_LS_CMD`
+if [ "${BASE_IMAGE_LS_OUTPUT/$'\n'}" != "" ]; then
+   BASE_IMAGE_RM_CMD="podman image rm $BASE_TAG_NAME"
+   if [ $DEBUG == "1" ]; then
+       echo ""
+       echo "$BASE_IMAGE_RM_CMD"
+       echo ""
+   fi
+   $BASE_IMAGE_RM_CMD
+fi
